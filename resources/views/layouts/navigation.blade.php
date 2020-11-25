@@ -176,7 +176,7 @@
     </li>
     <li>
         <a href="{{ route('master-privy.verifikasiPDF.index') }}">
-            <i class="icon icon-television light-blue-text s-18"></i>
+            <i class="icon icon-files-o yellow-text s-18"></i>
             <span>Verifikasi</span>
         </a>
     </li>
