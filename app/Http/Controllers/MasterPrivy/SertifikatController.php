@@ -63,7 +63,8 @@ class SertifikatController extends Controller
 
         $file     = $request->file('foto');
         $fileName = time() . "." . $file->getClientOriginalName();  
-        $request->file('foto')->move("images/privy/", $fileName);
+        // $request->file('foto')->move("images/privy/", $fileName);
+        $request->file('file')->storeAs('/files/', $fileName, 'sftp', 'public');
 
         $sertifikats = new Sertifikat();
         // $pedagang->nm_pedagang     = $request->nm_pedagang;
@@ -116,8 +117,8 @@ class SertifikatController extends Controller
             // Proses Saved Foto
                 $file     = $request->file('foto');
                 $fileName = time() . "." . $file->getClientOriginalName();  
-                $request->file('foto')->move("images/privy/", $fileName);
-
+                // $request->file('foto')->move("images/privy/", $fileName);
+                $request->file('file')->storeAs('/files/', $fileName, 'sftp', 'public');
           
             $sertifikats->update([
                 'foto'=> $fileName
