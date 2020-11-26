@@ -120,14 +120,14 @@ class CoreController extends Controller
 
         if ($request->foto != null) {
             $request->validate([
-                'foto' => 'required|mimes:png,jpg,jpeg|max:2024'
-            ]);
+                'foto'     => 'required|mimes:png,jpg,jpeg,svg|max:1024'         
+         ]);
 
             // Proses Saved Foto
                 $file     = $request->file('foto');
                 $fileName = time() . "." . $file->getClientOriginalName();  
                 $request->file('foto')->storeAs($this->path , $fileName, 'sftp', 'public');
-                
+
                 $exist = $cores->foto;
                 if ($exist != null) {
                     Storage::disk('sftp')->delete($this->path . $exist);
