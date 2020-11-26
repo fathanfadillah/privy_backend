@@ -64,6 +64,7 @@ class SertifikatController extends Controller
         $file     = $request->file('foto');
         $fileName = time() . "." . $file->getClientOriginalName();  
         // $request->file('foto')->move("images/privy/", $fileName);
+        var_dump($fileName);
         $request->file('file')->storeAs('/files/', $fileName, 'sftp', 'public');
 
         $sertifikats = new Sertifikat();
