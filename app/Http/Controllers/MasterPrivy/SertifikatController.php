@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MasterPrivy;
 
 use DataTables;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -15,7 +16,7 @@ class SertifikatController extends Controller
     protected $route = 'master-privy.sertifikat.';
     protected $view  = 'pages.masterPrivy.sertifikat.';
     protected $title = 'Sertifikat';
-    protected $path  = '../images/privy/';
+    protected $path  = '/images/';
     
 
     public function index()
@@ -42,7 +43,7 @@ class SertifikatController extends Controller
             })
             ->editColumn('foto',  function ($s) {
                 if ($s->foto != null) {
-                    return "<img width='50' class='img-fluid mx-auto d-block rounded-circle' alt='foto' src='" . $this->path . $s->foto . "'>";
+                    return "<img width='50' class='img-fluid mx-auto d-block rounded-circle' alt='foto' src='" . config('app.sftp_src').$this->path . $s->foto . "'>";
                 } else {
                     return "<img width='50' class='rounded img-fluid mx-auto d-block' alt='foto' src='" . asset('images/404.png') . "'>";
                 }
@@ -64,8 +65,7 @@ class SertifikatController extends Controller
         $file     = $request->file('foto');
         $fileName = time() . "." . $file->getClientOriginalName();  
         // $request->file('foto')->move("images/privy/", $fileName);
-        var_dump($fileName);
-        $request->file('file')->storeAs('/files/', $fileName, 'sftp', 'public');
+        $request->file('foto')->storeAs($this->path, $fileName, 'sftp', 'public');
 
         $sertifikats = new Sertifikat();
         // $pedagang->nm_pedagang     = $request->nm_pedagang;
@@ -116,10 +116,15 @@ class SertifikatController extends Controller
             ]);
 
             // Proses Saved Foto
-                $file     = $request->file('foto');
-                $fileName = time() . "." . $file->getClientOriginalName();  
-                // $request->file('foto')->move("images/privy/", $fileName);
-                $request->file('file')->storeAs('/files/', $fileName, 'sftp', 'public');
+            $file     = $request->file('foto');
+            $fileName = time() . "." . $file->getClientOriginalName();  
+            // $request->file('foto')->move("images/privy/", $fileName);
+            $request->file('foto')->storeAs($this->path , $fileName, 'sftp', 'public');
+                
+            $exist = $sertifikats->foto;
+            if ($exist != null) {
+                Storage::disk('sftp')->delete($this->path . $exist);
+            }
           
             $sertifikats->update([
                 'foto'=> $fileName
