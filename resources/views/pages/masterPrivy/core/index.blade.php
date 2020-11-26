@@ -275,7 +275,7 @@ function edit(id) {
     $('input[name=_method]').val('PATCH');
     $.get("{{ route($route.'edit', ':id') }}".replace(':id', id), function(data) {
         $('#id').val(data.id);
-        var path = "{{$path}}" + data.foto;
+        var path = "{{ config('app.sftp_src') }}"+"{{ $path}}" + data.foto;
         $('#result').attr({
             'src': path,
             'class': 'img-fluid mt-2 mb-2',

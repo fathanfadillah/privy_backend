@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MasterPrivy;
 
 use DataTables;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -15,7 +16,7 @@ class CoreController extends Controller
     protected $route = 'master-privy.core.';
     protected $view  = 'pages.masterPrivy.core.';
     protected $title = 'Core';
-    protected $path  = '../images/privy/';
+    protected $path  = '/images/';
 
     public function index()
     {
@@ -41,7 +42,7 @@ class CoreController extends Controller
             })
             ->editColumn('foto',  function ($c) {
                 if ($c->foto != null) {
-                    return "<img width='50' class='img-fluid mx-auto d-block rounded-circle' alt='foto' src='" . $this->path . $c->foto . "'>";
+                    return "<img width='50' class='img-fluid mx-auto d-block rounded-circle' alt='foto' src='" . config('app.sftp_src').$this->path . $c->foto . "'>";
                 } else {
                     return "<img width='50' class='rounded img-fluid mx-auto d-block' alt='foto' src='" . asset('images/404.png') . "'>";
                 }
@@ -62,7 +63,8 @@ class CoreController extends Controller
 
         $file     = $request->file('foto');
         $fileName = time() . "." . $file->getClientOriginalName();  
-        $request->file('foto')->move("images/privy/", $fileName);
+        // $request->file('foto')->move("images/privy/", $fileName);
+        $request->file('foto')->storeAs($this->path, $fileName, 'sftp', 'public');
 
         $cores = new Core();
         $cores->title = $request->title;
@@ -113,7 +115,6 @@ class CoreController extends Controller
         
         $title       = $request->title;
         $deskripsi = $request->deskripsi;
-        $foto  = $request->foto;
         
         $cores   = Core::find($id);
 
@@ -125,8 +126,12 @@ class CoreController extends Controller
             // Proses Saved Foto
                 $file     = $request->file('foto');
                 $fileName = time() . "." . $file->getClientOriginalName();  
-                $request->file('foto')->move("images/privy/", $fileName);
-
+                $request->file('foto')->storeAs($this->path , $fileName, 'sftp', 'public');
+                
+                $exist = $cores->foto;
+                if ($exist != null) {
+                    Storage::disk('sftp')->delete($this->path . $exist);
+                }
           
             $cores->update([
                 'foto' => $fileName,
