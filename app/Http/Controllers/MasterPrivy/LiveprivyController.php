@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MasterPrivy;
 
 use DataTables;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -15,7 +16,7 @@ class LiveprivyController extends Controller
     protected $route = 'master-privy.liveprivy.';
     protected $view  = 'pages.masterPrivy.liveprivy.';
     protected $title = 'Live Privy';
-    protected $path  = '../images/privy/';
+    protected $path  = '/images/';
     
 
     public function index()
@@ -42,7 +43,7 @@ class LiveprivyController extends Controller
             })
             ->editColumn('foto',  function ($p) {
                 if ($p->foto != null) {
-                    return "<img width='50' class='img-fluid mx-auto d-block rounded-circle' alt='foto' src='" . $this->path . $p->foto . "'>";
+                    return "<img width='50' class='img-fluid mx-auto d-block rounded-circle' alt='foto' src='" . config('app.sftp_src').$this->path . $p->foto . "'>";
                 } else {
                     return "<img width='50' class='rounded img-fluid mx-auto d-block' alt='foto' src='" . asset('images/404.png') . "'>";
                 }
@@ -63,7 +64,8 @@ class LiveprivyController extends Controller
 
                 $file     = $request->file('foto');
         $fileName = time() . "." . $file->getClientOriginalName();  
-        $request->file('foto')->move("images/privy/", $fileName);
+        // $request->file('foto')->move("images/privy/", $fileName);
+        $request->file('foto')->storeAs($this->path, $fileName,'sftp','public');
 
         $lives = new LivePrivy();
         // $pedagang->nm_pedagang     = $request->nm_pedagang;
@@ -85,8 +87,9 @@ class LiveprivyController extends Controller
 
         // Proses Delete Foto
         $exist = $lives->foto;
-        $path  = "images/privy/" . $exist;
-        \File::delete(public_path($path));
+        // $path  = "images/privy/" . $exist;
+        // \File::delete(public_path($path));
+        Storage::disk('sftp')->delete($this->path . $exist);
 
         // delete from table admin_details
         $lives->delete();   
@@ -116,8 +119,13 @@ class LiveprivyController extends Controller
             // Proses Saved Foto
                 $file     = $request->file('foto');
                 $fileName = time() . "." . $file->getClientOriginalName();  
-                $request->file('foto')->move("images/privy/", $fileName);
-
+                // $request->file('foto')->move("images/privy/", $fileName);
+                $request->file('foto')->storeAs($this->path , $fileName, 'sftp', 'public');
+                
+            $exist = $lives->foto;
+            if ($exist != null) {
+                Storage::disk('sftp')->delete($this->path . $exist);
+            }
           
             $lives->update([
                 'foto'=> $fileName

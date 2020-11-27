@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MasterPrivy;
 
 use DataTables;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -15,7 +16,7 @@ class PenghargaanController extends Controller
     protected $route = 'master-privy.penghargaan.';
     protected $view  = 'pages.masterPrivy.penghargaan.';
     protected $title = 'Penghargaan';
-    protected $path  = '../images/privy/';
+    protected $path  = '/images/';
     
 
     public function index()
@@ -43,7 +44,7 @@ class PenghargaanController extends Controller
             ->editColumn('foto',  function ($p) {
                 $paths = '../images/privy/';
                 if ($p->foto != null) {
-                    return "<img width='50' class='img-fluid mx-auto d-block rounded-circle' alt='foto' src='" . $paths . $p->foto . "'>";
+                    return "<img width='50' class='img-fluid mx-auto d-block rounded-circle' alt='foto' src='" . config('app.sftp_src').$this->path . $p->foto . "'>";
                 } else {
                     return "<img width='50' class='rounded img-fluid mx-auto d-block' alt='foto' src='" . asset('images/404.png') . "'>";
                 }
@@ -64,7 +65,8 @@ class PenghargaanController extends Controller
 
                 $file     = $request->file('foto');
         $fileName = time() . "." . $file->getClientOriginalName();  
-        $request->file('foto')->move("images/privy/", $fileName);
+        // $request->file('foto')->move("images/privy/", $fileName);
+        $request->file('foto')->storeAs($this->path, $fileName, 'sftp','public');
 
         $penghargaans = new Penghargaan();
         // $pedagang->nm_pedagang     = $request->nm_pedagang;
@@ -86,9 +88,10 @@ class PenghargaanController extends Controller
 
         // Proses Delete Foto
         $exist = $penghargaans->foto;
-        $path  = "images/privy/" . $exist;
-        \File::delete(public_path($path));
-
+        // $path  = "images/privy/" . $exist;
+        // \File::delete(public_path($path));
+        Storage::disk('sftp')->delete($this->path . $exist);
+        
         // delete from table admin_details
         $penghargaans->delete();   
 
@@ -117,8 +120,13 @@ class PenghargaanController extends Controller
             // Proses Saved Foto
                 $file     = $request->file('foto');
                 $fileName = time() . "." . $file->getClientOriginalName();  
-                $request->file('foto')->move("images/privy/", $fileName);
-
+                // $request->file('foto')->move("images/privy/", $fileName);
+                $request->file('foto')->storeAs($this->path , $fileName, 'sftp', 'public');
+                
+                $exist = $penghargaans->foto;
+                if ($exist != null) {
+                    Storage::disk('sftp')->delete($this->path . $exist);
+                }
           
             $penghargaans->update([
                 'foto'=> $fileName

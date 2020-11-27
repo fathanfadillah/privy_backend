@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MasterPrivy;
 
 use DataTables;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -15,7 +16,7 @@ class PimpinanController extends Controller
     protected $route = 'master-privy.pimpinan.';
     protected $view  = 'pages.masterPrivy.pimpinan.';
     protected $title = 'Pimpinan';
-    protected $path  = '../images/privy/';
+    protected $path  = '/images/';
 
     public function index()
     {
@@ -41,7 +42,7 @@ class PimpinanController extends Controller
             })
             ->editColumn('foto',  function ($p) {
                 if ($p->foto != null) {
-                    return "<img width='50' class='img-fluid mx-auto d-block rounded-circle' alt='foto' src='" . $this->path . $p->foto . "'>";
+                    return "<img width='50' class='img-fluid mx-auto d-block rounded-circle' alt='foto' src='" . config('app.sftp_src').$this->path . $p->foto . "'>";
                 } else {
                     return "<img width='50' class='rounded img-fluid mx-auto d-block' alt='foto' src='" . asset('images/404.png') . "'>";
                 }
@@ -64,7 +65,9 @@ class PimpinanController extends Controller
 
         $file     = $request->file('foto');
         $fileName = time() . "." . $file->getClientOriginalName();  
-        $request->file('foto')->move("images/privy/", $fileName);
+        // $request->file('foto')->move("images/privy/", $fileName);
+        $request->file('foto')->storeAs($this->path, $fileName, 'sftp', 'public');
+
 
         $pimpinans = new Pimpinan();
         // $pedagang->nm_pedagang     = $request->nm_pedagang;
@@ -88,8 +91,9 @@ class PimpinanController extends Controller
 
         // Proses Delete Foto
         $exist = $pimpinans->foto;
-        $path  = "images/privy/" . $exist;
-        \File::delete(public_path($path));
+        // $path  = "images/privy/" . $exist;
+        // \File::delete(public_path($path));
+        Storage::disk('sftp')->delete($this->path . $exist);
 
         // delete from table admin_details
         $pimpinans->delete();   
@@ -131,8 +135,13 @@ class PimpinanController extends Controller
             // Proses Saved Foto
                 $file     = $request->file('foto');
                 $fileName = time() . "." . $file->getClientOriginalName();  
-                $request->file('foto')->move("images/privy/", $fileName);
+                // $request->file('foto')->move("images/privy/", $fileName);
+                $request->file('foto')->storeAs($this->path , $fileName, 'sftp', 'public');
 
+                $exist = $pimpinans->foto;
+            if ($exist != null) {
+                Storage::disk('sftp')->delete($this->path . $exist);
+            }
           
             $pimpinans->update([
                 'foto' => $fileName,

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MasterPrivy;
 
 use DataTables;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -15,7 +16,7 @@ class KeuntunganController extends Controller
     protected $route = 'master-privy.keuntungan.';
     protected $view  = 'pages.masterPrivy.keuntungan.';
     protected $title = 'Keuntungan';
-    protected $path  = '../images/privy/';
+    protected $path  = '/images/';
 
     public function index()
     {
@@ -41,7 +42,7 @@ class KeuntunganController extends Controller
             })
             ->editColumn('icon',  function ($k) {
                 if ($k->icon != null) {
-                    return "<img width='50' class='img-fluid mx-auto d-block rounded-circle' alt='icon' src='" . $this->path . $k->icon . "'>";
+                    return "<img width='50' class='img-fluid mx-auto d-block rounded-circle' alt='icon' src='" . config('app.sftp_src').$this->path . $k->icon . "'>";
                 } else {
                     return "<img width='50' class='rounded img-fluid mx-auto d-block' alt='icon' src='" . asset('images/404.png') . "'>";
                 }
@@ -64,7 +65,8 @@ class KeuntunganController extends Controller
 
                 $file     = $request->file('icon');
         $fileName = time() . "." . $file->getClientOriginalName();  
-        $request->file('icon')->move("images/privy/", $fileName);
+        // $request->file('icon')->move("images/privy/", $fileName);  
+        $request->file('icon')->storeAs($this->path, $fileName,'sftp','public');
 
         $keuntungans = new Keuntungan();
         
@@ -84,9 +86,10 @@ class KeuntunganController extends Controller
 
         // Proses Delete Foto
         $exist = $keuntungans->icon;
-        $path  = "images/privy/" . $exist;
-        \File::delete(public_path($path));
-
+        // $path  = "images/privy/" . $exist;
+        // \File::delete(public_path($path));
+        Storage::disk('sftp')->delete($this->path . $exist);
+        
         // delete from table admin_details
         $keuntungans->delete();   
 
@@ -125,8 +128,13 @@ class KeuntunganController extends Controller
             // Proses Saved Foto
                 $file     = $request->file('icon');
                 $fileName = time() . "." . $file->getClientOriginalName();  
-                $request->file('icon')->move("images/privy/", $fileName);
-
+                // $request->file('icon')->move("images/privy/", $fileName);
+                $request->file('icon')->storeAs($this->path , $fileName, 'sftp', 'public');
+                
+                $exist = $keuntungans->icon;
+                if ($exist != null) {
+                    Storage::disk('sftp')->delete($this->path . $exist);
+                }
           
             $keuntungans->update([
                 'icon' => $fileName,

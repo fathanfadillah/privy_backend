@@ -87,9 +87,9 @@ class SertifikatController extends Controller
 
         // Proses Delete Foto
         $exist = $sertifikats->foto;
-        $path  = $this->path . $exist;
-        \File::delete(public_path($path));
-
+        // $path  = $this->path . $exist;
+        // \File::delete(public_path($path));
+        Storage::disk('sftp')->delete($this->path . $exist);
         // delete from table admin_details
         $sertifikats->delete();   
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MasterPrivy;
 
 use DataTables;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -15,7 +16,7 @@ class EntrepreneurController extends Controller
     protected $route = 'master-privy.entrepreneur.';
     protected $view  = 'pages.masterPrivy.entrepreneur.';
     protected $title = 'Entrepreneur';
-    protected $path  = '../images/privy/';
+    protected $path  = '/images/';
 
     public function index()
     {
@@ -41,7 +42,7 @@ class EntrepreneurController extends Controller
             })
             ->editColumn('foto',  function ($en) {
                 if ($en->foto != null) {
-                    return "<img width='50' class='img-fluid mx-auto d-block rounded-circle' alt='foto' src='" . $this->path . $en->foto . "'>";
+                    return "<img width='50' class='img-fluid mx-auto d-block rounded-circle' alt='foto' src='" . config('app.sftp_src').$this->path . $en->foto . "'>";
                 } else {
                     return "<img width='50' class='rounded img-fluid mx-auto d-block' alt='foto' src='" . asset('images/404.png') . "'>";
                 }
@@ -61,7 +62,8 @@ class EntrepreneurController extends Controller
 
         $file     = $request->file('foto');
         $fileName = time() . "." . $file->getClientOriginalName();  
-        $request->file('foto')->move("images/privy/", $fileName);
+        // $request->file('foto')->move("images/privy/", $fileName);
+        $request->file('foto')->storeAs($this->path, $fileName, 'sftp', 'public');
 
         $entrepreneurs = new Entrepreneur();
         $entrepreneurs->deskripsi = $request->deskripsi;
@@ -80,9 +82,10 @@ class EntrepreneurController extends Controller
 
         // Proses Delete Foto
         $exist = $entrepreneurs->foto;
-        $path  = "images/privy/" . $exist;
-        \File::delete(public_path($path));
-
+        // $path  = "images/privy/" . $exist;
+        // \File::delete(public_path($path));
+        Storage::disk('sftp')->delete($this->path . $exist);
+        
         // delete from table admin_details
         $entrepreneurs->delete();   
 
@@ -120,8 +123,12 @@ class EntrepreneurController extends Controller
             // Proses Saved Foto
                 $file     = $request->file('foto');
                 $fileName = time() . "." . $file->getClientOriginalName();  
-                $request->file('foto')->move("images/privy/", $fileName);
+                $request->file('foto')->storeAs($this->path, $fileName, 'sftp', 'public');
 
+            $exist = $entrepreneurs->foto;
+            if ($exist != null) {
+                Storage::disk('sftp')->delete($this->path . $exist);
+            }
           
             $entrepreneurs->update([
                 'foto' => $fileName,

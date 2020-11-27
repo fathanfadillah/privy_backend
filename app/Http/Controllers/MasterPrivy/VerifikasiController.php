@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MasterPrivy;
 
 use DataTables;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -15,7 +16,7 @@ class VerifikasiController extends Controller
     protected $route = 'master-privy.verifikasiPDF.';
     protected $view  = 'pages.masterPrivy.verifikasiPDF.';
     protected $title = 'Verifikasi PDF';
-    protected $path  = '../files/privy/';
+    protected $path  = '/files/';
     
 
     public function index()
@@ -41,7 +42,7 @@ class VerifikasiController extends Controller
             })
             ->editColumn('file',  function ($v) {
                 if ($v->file != null) {
-                    return "<img width='50' class='img-fluid mx-auto d-block' alt='foto' src='" . asset('images/pdf_icon.png') . "'>"."<a href='".asset('files/privy/'.$v->file)."'>$v->file</a>";
+                    return "<img width='50' class='img-fluid mx-auto d-block' alt='foto' src='" . asset('images/pdf_icon.png') . "'>"."<a href='".config('app.sftp_src').$this->path.$v->file."'>$v->file</a>";
                 } else {
                     return "<img width='50' class='rounded img-fluid mx-auto d-block' alt='foto' src='" . asset('images/404.png') . "'>";
                 }
@@ -61,9 +62,9 @@ class VerifikasiController extends Controller
 
         // Proses Delete Foto
         $exist = $verifikasis->foto;
-        $path  = "images/privy/" . $exist;
-        \File::delete(public_path($path));
-
+        // $path  = "images/privy/" . $exist;
+        // \File::delete(public_path($path));
+        Storage::disk('sftp')->delete($this->path . $exist);
         // delete from table admin_details
         $verifikasis->delete();   
 

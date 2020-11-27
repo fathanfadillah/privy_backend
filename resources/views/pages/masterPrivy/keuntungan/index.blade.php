@@ -231,7 +231,7 @@
         $('input[name=_method]').val('PATCH');
         $.get("{{ route($route.'edit', ':id') }}".replace(':id', id), function(data){
             $('#id').val(data.id);
-            var path = "{{$path}}"+data.icon;
+            var path = "{{config('app.sftp_src')}}"+"{{$path}}"+data.icon;
             $('#result').attr({'src': path, 'class': 'img-fluid mt-2 mb-2', 'style': 'margin-left: 50%'});
             $('#changeText').html('Change Image');
             $('#title_keuntungan').val(data.title_keuntungan);

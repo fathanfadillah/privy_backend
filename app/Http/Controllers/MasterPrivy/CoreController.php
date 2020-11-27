@@ -84,9 +84,9 @@ class CoreController extends Controller
 
         // Proses Delete Foto
         $exist = $cores->foto;
-        $path  = "images/privy/" . $exist;
-        \File::delete(public_path($path));
-
+        // $path  = "images/privy/" . $exist;
+        // \File::delete(public_path($path));
+        Storage::disk('sftp')->delete($this->path . $exist);
         // delete from table admin_details
         $cores->delete();   
 
