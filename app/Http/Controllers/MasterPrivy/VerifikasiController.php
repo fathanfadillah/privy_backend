@@ -36,7 +36,7 @@ class VerifikasiController extends Controller
     {
         $verifikasis = Verifikasi::orderBy('updated_at','desc');
         return DataTables::of($verifikasis)
-            ->addColumn('action', function ($v) {
+            ->addColumn('action', function ($v) {   
                 return "
                 <a href='#' onclick='remove(" . $v->id . ")' class='text-danger' title='Hapus Role'><i class='icon-remove'></i></a>";
             })
