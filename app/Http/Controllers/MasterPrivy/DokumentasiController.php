@@ -113,7 +113,7 @@ class DokumentasiController extends Controller
         
         $title       = $request->title;
         $deskripsi = $request->deskripsi;
-        $link = $request->deskripsi;
+        $link = $request->link;
         $icon  = $request->icon;
         
         $dokumentasis   = Dokumentasi::find($id);
