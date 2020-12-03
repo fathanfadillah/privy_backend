@@ -23,6 +23,7 @@ class DokumentasiController extends Controller
         $route = $this->route;
         $title = $this->title;
         $path = $this->path;
+        // dd('monyet');
         // dd($route);
         return view($this->view . 'index', compact(
             'route',
@@ -55,28 +56,37 @@ class DokumentasiController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title'  => 'required',
-            'deskripsi'     => 'required', 
-            'link'     => 'required',
-            'icon' => 'required|max:2024'
-        ]);
-
-        $file     = $request->file('icon');
-        $fileName = time() . "." . $file->getClientOriginalName();  
-        // $request->file('icon')->move("images/privy/", $fileName);
-        $request->file('icon')->storeAs($this->path, $fileName, 'sftp', 'public');
-
-        $dokumentasis = new Dokumentasi();
-        $dokumentasis->title = $request->title;
-        $dokumentasis->deskripsi = $request->deskripsi;
-        $dokumentasis->link = $request->link;
-        $dokumentasis->icon = $fileName;
-        $dokumentasis->save();
-
+        // dd('tai');
+        $count = Dokumentasi::count();
+        if($count < 3 ){
+            $request->validate([
+                'title'  => 'required',
+                'deskripsi'     => 'required', 
+                'link'     => 'required',
+                'icon' => 'required|max:2024'
+            ]);
+    
+            $file     = $request->file('icon');
+            $fileName = time() . "." . $file->getClientOriginalName();  
+            // $request->file('icon')->move("images/privy/", $fileName);
+            $request->file('icon')->storeAs($this->path, $fileName, 'sftp', 'public');
+    
+            $dokumentasis = new Dokumentasi();
+            $dokumentasis->title = $request->title;
+            $dokumentasis->deskripsi = $request->deskripsi;
+            $dokumentasis->link = $request->link;
+            $dokumentasis->icon = $fileName;
+            $dokumentasis->save();
+            $status = ' berhasil tersimpan.';
+            $code = 200;
+        }else{
+            $status = ' sudah penuh.';
+            $code = 507;
+        }      
+        
         return response()->json([
-            'message' => 'Data ' . $this->title . ' berhasil tersimpan.'
-        ]);
+            'message' => 'Data ' . $this->title . $status
+        ],$code);
     }
 
     public function destroy($id)

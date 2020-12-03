@@ -15,7 +15,7 @@ class KlienController extends Controller
 {
     protected $route = 'master-privy.klien.';
     protected $view  = 'pages.masterPrivy.klien.';
-    protected $title = 'klien';
+    protected $title = 'Klien';
     protected $path  = '/images/';
     
 

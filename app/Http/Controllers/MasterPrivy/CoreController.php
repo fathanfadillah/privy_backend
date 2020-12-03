@@ -23,7 +23,7 @@ class CoreController extends Controller
         $route = $this->route;
         $title = $this->title;
         $path = $this->path;
-        // dd($route);
+        // dd(Core::count());
         return view($this->view . 'index', compact(
             'route',
             'title',
@@ -55,27 +55,34 @@ class CoreController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title'  => 'required',
-            'deskripsi'     => 'required',
-             'foto'     => 'required|mimes:png,jpg,jpeg,svg|max:1024'         
-         ]);
-
-        $file     = $request->file('foto');
-        $fileName = time() . "." . $file->getClientOriginalName();  
-        // $request->file('foto')->move("images/privy/", $fileName);
-        $request->file('foto')->storeAs($this->path, $fileName, 'sftp', 'public');
-
-        $cores = new Core();
-        $cores->title = $request->title;
-        $cores->deskripsi = $request->deskripsi;
-        $cores->foto = $fileName;
-        $cores->save();
-                
+        $count = Core::count();
+        if($count < 4){
+            $request->validate([
+                'title'  => 'required',
+                'deskripsi'     => 'required',
+                 'foto'     => 'required|mimes:png,jpg,jpeg,svg|max:1024'         
+             ]);
+    
+            $file     = $request->file('foto');
+            $fileName = time() . "." . $file->getClientOriginalName();  
+            // $request->file('foto')->move("images/privy/", $fileName);
+            $request->file('foto')->storeAs($this->path, $fileName, 'sftp', 'public');
+    
+            $cores = new Core();
+            $cores->title = $request->title;
+            $cores->deskripsi = $request->deskripsi;
+            $cores->foto = $fileName;
+            $cores->save();    
+            $status = ' berhasil tersimpan.';
+            $code = 200;
+        }else{
+            $status = ' sudah penuh.';
+            $code = 507;
+        }               
 
         return response()->json([
-            'message' => 'Data ' . $this->title . ' berhasil tersimpan.'
-        ]);
+            'message' => 'Data ' . $this->title . $status
+        ],$code);
     }
 
     public function destroy($id)

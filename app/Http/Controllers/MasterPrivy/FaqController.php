@@ -55,10 +55,6 @@ class FaqController extends Controller
            ]);
 
         $faqs = new Faq();
-        // $pedagang->nm_pedagang     = $request->nm_pedagang;
-        // $pedagang->alamat_pedagang = $request->alamat_pedagang;
-        // $pedagang->no_ktp = $request->no_ktp;
-        // $pedagang->no_telp = $request->no_telp;
         $faqs->kategori = $request->kategori;
         $faqs->question = $request->question;
         $faqs->answer = $request->answer;

@@ -77,7 +77,7 @@
                                             <span id="changeText" class="js-fileName">Browse Image</span>
                                         </label>
                                         <img id="result" class="d-none" width="150">
-                                        <img width="150" class="rounded img-fluid m-l-240 mt-1 mb-1" id="preview"
+                                        <img width="150" class="rounded img-fluid m-l-100 mt-1 mb-1" id="preview"
                                             alt="" />
 
                                     </div>
@@ -233,6 +233,7 @@ $('#form').on('submit', function(e) {
             data: new FormData(($(this)[0])),
             contentType: false,
             processData: false,
+            // if
             success: function(data) {
                 console.log(data);
                 $('#alert').html(
@@ -246,12 +247,13 @@ $('#form').on('submit', function(e) {
                 respon = data.responseJSON;
                 if (respon.errors) {
                     $.each(respon.errors, function(index, value) {
-                        err = err + "<li>" + value + "</li>";
+                        err = err + '<li>'  + value + '</li>' ;
                     });
                 }
                 $('#alert').html(
                     "<div role='alert' class='alert alert-danger alert-dismissible'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>×</span></button><strong>Error!</strong> " +
                     respon.message + "<ol class='pl-3 m-0'>" + err + "</ol></div>");
+                    add();
             }
         });
         return false;

@@ -55,29 +55,37 @@ class KeuntunganController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            // 'no_telp' => 'required',
-            'title_keuntungan'  => 'required',
-            'deskripsi_keuntungan'     => 'required',
-             'icon'     => 'required|mimes:png,jpg,jpeg|max:1024'         
-            // 'alamat_pedagang' => 'required'
-        ]);
-
-                $file     = $request->file('icon');
-        $fileName = time() . "." . $file->getClientOriginalName();  
-        // $request->file('icon')->move("images/privy/", $fileName);  
-        $request->file('icon')->storeAs($this->path, $fileName,'sftp','public');
-
-        $keuntungans = new Keuntungan();
-        
-        $keuntungans->title_keuntungan = $request->title_keuntungan;
-        $keuntungans->deskripsi_keuntungan = $request->deskripsi_keuntungan;
-        $keuntungans->icon = $fileName;
-        $keuntungans->save();
+        $count = Keuntungan::count(); 
+        if($count < 6){
+            $request->validate([
+                // 'no_telp' => 'required',
+                'title_keuntungan'  => 'required',
+                'deskripsi_keuntungan'     => 'required',
+                 'icon'     => 'required|mimes:png,jpg,jpeg|max:1024'         
+                // 'alamat_pedagang' => 'required'
+            ]);
+    
+            $file     = $request->file('icon');
+            $fileName = time() . "." . $file->getClientOriginalName();  
+            // $request->file('icon')->move("images/privy/", $fileName);  
+            $request->file('icon')->storeAs($this->path, $fileName,'sftp','public');
+    
+            $keuntungans = new Keuntungan();
+            
+            $keuntungans->title_keuntungan = $request->title_keuntungan;
+            $keuntungans->deskripsi_keuntungan = $request->deskripsi_keuntungan;
+            $keuntungans->icon = $fileName;
+            $keuntungans->save();
+            $status = ' berhasil tersimpan.'; 
+            $code = 200;
+        }else{
+            $status = ' sudah penuh.';
+            $code = 507;
+        }
 
         return response()->json([
-            'message' => 'Data ' . $this->title . ' berhasil tersimpan.'
-        ]);
+            'message' => 'Data ' . $this->title . $status
+        ],$code);
     }
 
     public function destroy($id)

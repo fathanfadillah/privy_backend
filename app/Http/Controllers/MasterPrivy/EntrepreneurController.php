@@ -55,25 +55,32 @@ class EntrepreneurController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'deskripsi'     => 'required',
-             'foto'     => 'required|mimes:png,jpg,jpeg|max:1024'         
-         ]);
-
-        $file     = $request->file('foto');
-        $fileName = time() . "." . $file->getClientOriginalName();  
-        // $request->file('foto')->move("images/privy/", $fileName);
-        $request->file('foto')->storeAs($this->path, $fileName, 'sftp', 'public');
-
-        $entrepreneurs = new Entrepreneur();
-        $entrepreneurs->deskripsi = $request->deskripsi;
-        $entrepreneurs->foto = $fileName;
-        $entrepreneurs->save();
-                
+        $count = Entrepreneur::count();
+        if($count < 3 ){
+            $request->validate([
+                'deskripsi'     => 'required',
+                 'foto'     => 'required|mimes:png,jpg,jpeg|max:1024'         
+             ]);
+    
+            $file     = $request->file('foto');
+            $fileName = time() . "." . $file->getClientOriginalName();  
+            // $request->file('foto')->move("images/privy/", $fileName);
+            $request->file('foto')->storeAs($this->path, $fileName, 'sftp', 'public');
+    
+            $entrepreneurs = new Entrepreneur();
+            $entrepreneurs->deskripsi = $request->deskripsi;
+            $entrepreneurs->foto = $fileName;
+            $entrepreneurs->save();
+            $status = ' berhasil tersimpan.';
+            $code = 200;
+        }else{
+            $status = ' sudah penuh.';
+            $code = 507;
+        }
 
         return response()->json([
-            'message' => 'Data ' . $this->title . ' berhasil tersimpan.'
-        ]);
+            'message' => 'Data ' . $this->title . $status
+        ],$code);
     }
 
     public function destroy($id)

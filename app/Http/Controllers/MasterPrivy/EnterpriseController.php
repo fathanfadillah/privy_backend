@@ -23,7 +23,6 @@ class EnterpriseController extends Controller
         $route = $this->route;
         $title = $this->title;
         $path = $this->path;
-        // dd($route);
         return view($this->view . 'index', compact(
             'route',
             'title',
@@ -55,27 +54,35 @@ class EnterpriseController extends Controller
 
     public function store(Request $request)
     {
+        $count = Enterprise::count();
         $request->validate([
             'title'  => 'required',
             'deskripsi'     => 'required',
              'foto'     => 'required|mimes:png,jpg,jpeg|max:1024'         
          ]);
+        if($count < 5){
+            $file     = $request->file('foto');
+            $fileName = time() . "." . $file->getClientOriginalName();  
+            // $request->file('foto')->move("images/privy/", $fileName);
+            $request->file('foto')->storeAs($this->path, $fileName, 'sftp', 'public');
+    
+            $enterprises = new Enterprise();
+            $enterprises->title = $request->title;
+            $enterprises->deskripsi = $request->deskripsi;
+            $enterprises->foto = $fileName;
+            $enterprises->save();
+            $status = ' berhasil tersimpan.';    
+            $code = 200;
+        }else{
+            $status = ' sudah penuh.';
+            $code = 507;
+        }      
+        
+        $responses = response()->json([
+            'message' => 'Data ' . $this->title . $status,
+        ],$code);
 
-        $file     = $request->file('foto');
-        $fileName = time() . "." . $file->getClientOriginalName();  
-        // $request->file('foto')->move("images/privy/", $fileName);
-        $request->file('foto')->storeAs($this->path, $fileName, 'sftp', 'public');
-
-        $enterprises = new Enterprise();
-        $enterprises->title = $request->title;
-        $enterprises->deskripsi = $request->deskripsi;
-        $enterprises->foto = $fileName;
-        $enterprises->save();
-                
-
-        return response()->json([
-            'message' => 'Data ' . $this->title . ' berhasil tersimpan.'
-        ]);
+        return $responses;
     }
 
     public function destroy($id)

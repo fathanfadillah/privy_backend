@@ -56,29 +56,37 @@ class LiputanController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            // 'no_telp' => 'required',
-            'foto'     => 'required|mimes:png,jpg,jpeg|max:1024'         
-            // 'alamat_pedagang' => 'required'
-        ]);
-
-                $file     = $request->file('foto');
-        $fileName = time() . "." . $file->getClientOriginalName();  
-        // $request->file('foto')->move("images/privy/", $fileName);
-        $request->file('foto')->storeAs($this->path, $fileName,'sftp','public');
-
-        $liputans = new Liputan();
-        // $pedagang->nm_pedagang     = $request->nm_pedagang;
-        // $pedagang->alamat_pedagang = $request->alamat_pedagang;
-        // $pedagang->no_ktp = $request->no_ktp;
-        // $pedagang->no_telp = $request->no_telp;
-       
-        $liputans->foto = $fileName;
-        $liputans->save();
-
+        $count = Liputan::count();
+        if($count < 4){
+            $request->validate([
+                // 'no_telp' => 'required',
+                'foto'     => 'required|mimes:png,jpg,jpeg|max:1024'         
+                // 'alamat_pedagang' => 'required'
+            ]);
+    
+                    $file     = $request->file('foto');
+            $fileName = time() . "." . $file->getClientOriginalName();  
+            // $request->file('foto')->move("images/privy/", $fileName);
+            $request->file('foto')->storeAs($this->path, $fileName,'sftp','public');
+    
+            $liputans = new Liputan();
+            // $pedagang->nm_pedagang     = $request->nm_pedagang;
+            // $pedagang->alamat_pedagang = $request->alamat_pedagang;
+            // $pedagang->no_ktp = $request->no_ktp;
+            // $pedagang->no_telp = $request->no_telp;
+           
+            $liputans->foto = $fileName;
+            $liputans->save();
+            $status = ' berhasil tersimpan.';
+            $code = 200;    
+        }else{
+            $status = ' sudah penuh.';
+            $code = 507;
+        }
+        
         return response()->json([
-            'message' => 'Data ' . $this->title . ' berhasil tersimpan.'
-        ]);
+            'message' => 'Data ' . $this->title . $status
+        ],$code);
     }
 
     public function destroy($id)
