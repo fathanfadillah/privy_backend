@@ -349,8 +349,6 @@ $('#form').on('submit', function(e) {
         url = (save_method == 'add') ? "{{ route($route.'store') }}" : "{{ route($route.'update', ':id') }}"
             .replace(':id', $('#id').val());
             // editor.setData('');
-            $('#isi').code("");
-
         $.ajax({
             url: url,
             type: (save_method == 'add') ? 'POST' : 'POST',
@@ -379,6 +377,7 @@ $('#form').on('submit', function(e) {
                     add();
             }
         });
+        $("#isi").summernote('code', '');
         return false;
     }
     $(this).addClass('was-validated');
