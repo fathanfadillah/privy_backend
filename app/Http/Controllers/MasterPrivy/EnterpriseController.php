@@ -60,7 +60,7 @@ class EnterpriseController extends Controller
             'deskripsi'     => 'required',
              'foto'     => 'required|mimes:png,jpg,jpeg|max:1024'         
          ]);
-        if($count < 5){
+        if($count < 10){
             $file     = $request->file('foto');
             $fileName = time() . "." . $file->getClientOriginalName();  
             // $request->file('foto')->move("images/privy/", $fileName);

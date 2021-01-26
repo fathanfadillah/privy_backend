@@ -56,7 +56,7 @@ class PimpinanController extends Controller
     public function store(Request $request)
     {
         $count = Pimpinan::count();
-        if($count < 4){
+        if($count < 7){
             $request->validate([
                 // 'no_telp' => 'required',
                 'nama'  => 'required',

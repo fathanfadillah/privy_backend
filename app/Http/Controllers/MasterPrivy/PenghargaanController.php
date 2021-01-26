@@ -58,7 +58,7 @@ class PenghargaanController extends Controller
     public function store(Request $request)
     {
         $count = Penghargaan::count();
-        if($count){
+        if($count < 13){
             $request->validate([
                 // 'no_telp' => 'required',
                 'foto'     => 'required|mimes:png,jpg,jpeg|max:1024'         

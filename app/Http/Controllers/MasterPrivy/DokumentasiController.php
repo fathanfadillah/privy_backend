@@ -58,7 +58,7 @@ class DokumentasiController extends Controller
     {
         // dd('tai');
         $count = Dokumentasi::count();
-        if($count < 3 ){
+        if($count < 7 ){
             $request->validate([
                 'title'  => 'required',
                 'deskripsi'     => 'required', 

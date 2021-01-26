@@ -174,6 +174,12 @@ Route::group(['middleware' => ['auth']], function () {
      //verifikasiPDF
      Route::resource('verifikasiPDF', 'VerifikasiController');
      Route::post('verifikasiPDF/api', 'VerifikasiController@api')->name('verifikasiPDF.api');
+    //blog
+     Route::resource('blog', 'BlogController');
+     Route::post('blog/api', 'BlogController@api')->name('blog.api');
+     //grow
+     Route::resource('grow', 'GrowController');
+     Route::post('grow/api', 'GrowController@api')->name('grow.api');
     });
 
 

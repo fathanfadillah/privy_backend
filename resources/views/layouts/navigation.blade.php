@@ -180,5 +180,17 @@
             <span>Verifikasi</span>
         </a>
     </li>
+    <li>
+        <a href="{{ route('master-privy.blog.index') }}">
+            <i class="icon icon-list-alt blue-text s-18"></i>
+            <span>Blog</span>
+        </a>
+    </li>
+    <li>
+        <a href="{{ route('master-privy.grow.index') }}">
+            <i class="icon icon-list-alt blue-text s-18"></i>
+            <span>Grow</span>
+        </a>
+    </li>
     @endcan
 </ul>

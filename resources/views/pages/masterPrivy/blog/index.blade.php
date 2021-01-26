@@ -1,6 +1,8 @@
 @extends('layouts.app')
 @section('style')
 <script src="https://cdn.tiny.cloud/1/potgiirlij5syajyscd16e0mtn5iqa6r0gbtybul6t0zhgok/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+{{-- <script src="https://cdn.ckeditor.com/ckeditor5/24.0.0/classic/ckeditor.js"></script> --}}
 @endsection
 @section('title', '| '.$title.'')
 @section('content')
@@ -32,10 +34,13 @@
                                     <th>Jenis Bayar</th>
                                     <th>Status</th>
                                     <th>Pedagang</th> -->
+                                    <th>Judul</th>
                                     <th>Kategori</th>
-                                    <th>Question</th>
-                                    <th>Answer</th>
-                                    <!-- <th>Foto</th> -->
+                                    <th>Tanggal Terbit</th>
+                                    <th>Pembukaan</th>
+                                    <th>Isi</th>
+                                    <th>Foto</th>
+                                   <!-- <th>Foto</th> -->
                                     <!-- <th>Jenis Bayar</th>
                                     <th>Status</th>
                                     <th>Pedagang</th> -->
@@ -59,27 +64,59 @@
                             <div class="form-row form-inline">
                                 <div class="col-md-12">
                                     <div class="form-group m-0">
+                                        <label for="judul" class="col-form-label s-12 col-md-4">Judul</label>
+                                        <input type="text" name="judul" id="judul" placeholder=""
+                                            class="form-control r-0 light s-12 col-md-8" autocomplete="off" required />
+                                    </div>
+                                    <div class="form-group m-0">
                                         <label for="kategori" class="col-form-label s-12 col-md-4">Kategori</label>
                                         {{-- <input type="text" name="kategori" id="kategori" placeholder=""
                                             class="form-control r-0 light s-12 col-md-8" autocomplete="off" required /> --}}
                                             <select id="kategori" name="kategori" class="form-control form-control-sm">
-                                                <option value="Top Asked Question">Top Asked Question</option>
-                                                <option value="Enterprise">Enterprise</option>
-                                                <option value="General">General</option>
+                                                <option value="event">event</option>
+                                                <option value="live at privy">live at privy</option>
+                                                <option value="case study">case study</option>
+                                                <option value="stories">stories</option>
+                                                <option value="news">news</option>
+                                                <option value="tips & trick">tips & trick</option>
                                               </select>
-                                        </div>
-                                    <div class="form-group m-0">
-                                        <label for="question" class="col-form-label s-12 col-md-4">Question</label>
-                                        <input type="text" name="question" id="question" placeholder=""
-                                            class="form-control r-0 light s-12 col-md-8" autocomplete="off" required />
                                     </div>
                                     <div class="form-group m-0">
-                                        <label for="answer" class="col-form-label s-12 col-md-4">Answer</label>
-                                        <textarea name="answer" id="answer" cols="30" rows="10" required></textarea>
+                                        <label for="tanggal_terbit" class="col-form-label s-12 col-md-4">Tanggal Terbit</label>
+                                        <input type="date" name="tanggal_terbit" id="tanggal_terbit" placeholder=""
+                                            class="form-control r-0 light s-12 col-md-8" autocomplete="off" required />
+                                    </div>
+                                    <div class="form-group m-0 mb-2">
+                                        <label for="pembukaan" class="col-form-label s-12 col-md-4">Pembukaan</label>
+                                        <textarea class="pembukaan" name="pembukaan" id="pembukaan" cols="10" rows="5" required></textarea>
+                                    </div>
+                                    <div class="form-group m-0">
+                                        <label for="isi" class="col-form-label s-12 col-md-4">Isi</label>
+                                        <div class="r-0 s-12 col-md-8">
+                                            <textarea name="isi" id="isi" class="col-md-12">
+                                            </textarea>
+                                        </div>
+                                        
+                                        {{-- <div id="toolbar-isi" class="form-control r-0 light s-12 col-md-8"></div> --}}
+                                        {{-- <div id="isi" class="form-control r-0 light s-12 col-md-8">
+                                        </div> --}}
+                                        {{-- <textarea class="isi" name="isi" id="isi" cols="30" rows="10" required></textarea> --}}
                                         {{-- <input type="text" name="answer" id="answer" placeholder=""
                                             class="form-control r-0 light s-12 col-md-8" autocomplete="off" required /> --}}
                                     </div>
+                                    <div class="mt-1 form-group m-0">
+                                        <label for="" class="col-form-label s-12 col-md-4">Foto</label>
+                                        <input type="file" name="foto" id="file" class="input-file"
+                                            onchange="tampilkanPreview(this,'preview')">
+                                        <label for="file" class="btn-tertiary js-labelFile col-md-8">
+                                            <i class="icon icon-image mr-2 m-b-1"></i>
+                                            <span id="changeText" class="js-fileName">Browse Image</span>
+                                        </label>
+                                        <img id="result" class="d-none" width="150">
+                                        <img width="150" class="rounded img-fluid m-l-100 mt-5 mb-1" id="preview"
+                                            alt="" />
 
+                                    </div>
                                     <!-- <div class="form-group m-0">
                                         <label for="alamat_pedagang" class="col-form-label s-12 col-md-4">Alamat</label>
                                         <textarea name="alamat_pedagang" id="alamat_pedagang" placeholder="" class="form-control r-0 light s-12 col-md-8" autocomplete="off" required></textarea>
@@ -100,23 +137,62 @@
 </div>
 @endsection
 @section('script')
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
+{{-- <script type="text/javascript">
+    let editor;
+
+    ClassicEditor
+            .create( document.querySelector('#isi'),{
+                toolbar: [ 'underline', 'bold', 'italic', 'bulletedList', 'numberedList', 'blockQuote' ]
+            } )
+            .then( newEditor => {
+                editor = newEditor;
+            } )
+            .catch( error => {
+                console.error( error );
+            } );
+</script> --}}
+
 <script type="text/javascript">
-
-tinymce.init({
-height: 450,
-width: '66%',
-selector: 'textarea',
-plugins: [
-'advlist autolink link image lists charmap preview hr anchor pagebreak',
-'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
-'emoticons template paste'
-],
-toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | preview | fullscreen',
-
-menubar: 'file edit view format tools',
-content_css: 'css/content.css',
-language: 'id'
+// isi
+$(document).ready(function() {
+  $('#isi').summernote();
 });
+
+// pembukaan
+tinymce.init({
+    mode: "exact",
+    height: 450,
+    width: '66%',
+    selector: 'textarea.pembukaan',
+    plugins: [
+        'advlist autolink link image lists charmap preview hr anchor pagebreak',
+        'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+        'emoticons template paste'
+    ],
+    toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | preview | fullscreen',
+    menubar: 'file edit view format tools',
+    content_css: 'css/content.css',
+    language: 'id'
+});
+
+// tinymce.init({
+//     mode: "exact",
+//     height: 450,
+//     width: '66%',
+//     selector: 'textarea.isi',
+//     plugins: [
+//         'advlist autolink link image lists charmap preview hr anchor pagebreak',
+//         'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+//         'emoticons template paste'
+//     ],
+//     toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | preview | fullscreen',
+//     menubar: 'file edit view format tools',
+//     content_css: 'css/content.css',
+//     language: 'id'
+// });
+
 
 var table = $('#dataTable').dataTable({
    "language": { 
@@ -154,17 +230,29 @@ var table = $('#dataTable').dataTable({
             className: 'text-center'
         },
         {
+            data: 'judul',
+            name: 'judul'
+        },
+        {
             data: 'kategori',
             name: 'kategori'
         },
         {
-            data: 'question',
-            name: 'question'
+            data: 'tanggal_terbit',
+            name: 'tanggal_terbit'
+        },
+        {
+            data: 'pembukaan',
+            name: 'pembukaan'
         },
         // {data: 'no_telp', name: 'no_telp'},
         {
-            data: 'answer',
-            name: 'answer'
+            data: 'isi',
+            name: 'isi'
+        },
+        {
+            data: 'foto',
+            name: 'foto'
         },
         {
             data: 'action',
@@ -192,6 +280,46 @@ var table = $('#dataTable').dataTable({
     });
 })();
 
+function tampilkanPreview(gambar, idpreview) {
+    $('#result').attr({
+        'src': '-',
+        'alt': ''
+    });
+    var gb = gambar.files;
+    for (var i = 0; i < gb.length; i++) {
+        var gbPreview = gb[i];
+        var imageType = /image.*/;
+        var preview = document.getElementById(idpreview);
+        var reader = new FileReader();
+        if (gbPreview.type.match(imageType)) {
+            preview.file = gbPreview;
+            reader.onload = (function(element) {
+                return function(e) {
+                    element.src = e.target.result;
+                };
+            })(preview);
+            reader.readAsDataURL(gbPreview);
+        } else {
+            $.confirm({
+                title: '',
+                content: 'Tipe file tidak boleh! haruf format gambar (png, jpg)',
+                icon: 'icon icon-close',
+                theme: 'modern',
+                closeIcon: true,
+                animation: 'scale',
+                type: 'red',
+                buttons: {
+                    ok: {
+                        text: "ok!",
+                        btnClass: 'btn-primary',
+                        keys: ['enter'],
+                        action: add()
+                    }
+                }
+            });
+        }
+    }
+}
 
 function add() {
     save_method = "add";
@@ -220,6 +348,9 @@ $('#form').on('submit', function(e) {
         $('#alert').html('');
         url = (save_method == 'add') ? "{{ route($route.'store') }}" : "{{ route($route.'update', ':id') }}"
             .replace(':id', $('#id').val());
+            // editor.setData('');
+            $('#isi').code("");
+
         $.ajax({
             url: url,
             type: (save_method == 'add') ? 'POST' : 'POST',
@@ -245,6 +376,7 @@ $('#form').on('submit', function(e) {
                 $('#alert').html(
                     "<div role='alert' class='alert alert-danger alert-dismissible'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>×</span></button><strong>Error!</strong> " +
                     respon.message + "<ol class='pl-3 m-0'>" + err + "</ol></div>");
+                    add();
             }
         });
         return false;
@@ -268,13 +400,35 @@ function edit(id) {
     $('input[name=_method]').val('PATCH');
     $.get("{{ route($route.'edit', ':id') }}".replace(':id', id), function(data) {
         $('#id').val(data.id);
+        var path = "{{config('app.sftp_src')}}"+"{{$path}}" + data.foto;
+        $('#result').attr({
+            'src': path,
+            'class': 'img-fluid mt-2 mb-2',
+            'style': 'margin-left: 50%'
+        });
+        $('#changeText').html('Change Image');
+        $('#judul').val(data.judul);
         $('#kategori').val(data.kategori);
-        $('#question').val(data.question);
-        // $('#answer').val(data.answer);
-        tinymce.activeEditor.setContent(data.answer);
-        tinymce.activeEditor.getContent(data.answer);
-        
+        $('#tanggal_terbit').val(data.tanggal_terbit);
+        // $('pembukaan').val(data.pembukaan);
+        // $('isi').val(data.isi);
+        // tinymce
+        tinymce.activeEditor.setContent(data.pembukaan);
+        // tinymce.activeEditor.getContent(data.pembukaan);
+        // tinymce.activeEditor.setContent(data.isi);
+        // tinymce.activeEditor.getContent(data.isi);
+        // $('.ck-editor').remove();
+        // ckeditor5
+        //setter
+        // ClassicEditor
+        //     .create( document.querySelector( '#isi' ) )
+        //     .then(function (editor) {
+        //         editor.setData(data.isi);
+        //     });
+        // editor.setData(data.isi);
+        $("#isi").summernote("code", data.isi);
     }, "JSON").fail(function() {
+        // $('#isi').val(editor.getData());
         reload();
     });
 

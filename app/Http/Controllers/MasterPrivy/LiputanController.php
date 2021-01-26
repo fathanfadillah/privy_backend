@@ -57,7 +57,7 @@ class LiputanController extends Controller
     public function store(Request $request)
     {
         $count = Liputan::count();
-        if($count < 4){
+        if($count < 13){
             $request->validate([
                 // 'no_telp' => 'required',
                 'foto'     => 'required|mimes:png,jpg,jpeg|max:1024'         

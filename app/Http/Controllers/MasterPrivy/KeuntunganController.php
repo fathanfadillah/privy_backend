@@ -56,7 +56,7 @@ class KeuntunganController extends Controller
     public function store(Request $request)
     {
         $count = Keuntungan::count(); 
-        if($count < 6){
+        if($count < 13){
             $request->validate([
                 // 'no_telp' => 'required',
                 'title_keuntungan'  => 'required',

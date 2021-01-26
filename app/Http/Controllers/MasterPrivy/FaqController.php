@@ -30,9 +30,9 @@ class FaqController extends Controller
     {
         $faq = Faq::orderBy('updated_at','desc');
         return DataTables::of($faq)
-        ->addColumn('answer', function ($fa) {
-            return $fa->answer;
-        })
+            ->addColumn('answer', function ($fa) {
+                return $fa->answer;
+            })
             ->addColumn('action', function ($f) {
                 return "
                 <a href='#' onclick='edit(" . $f->id . ")' title='Edit Role'><i class='icon-pencil mr-1'></i></a>
