@@ -73,13 +73,11 @@
                                         {{-- <input type="text" name="kategori" id="kategori" placeholder=""
                                             class="form-control r-0 light s-12 col-md-8" autocomplete="off" required /> --}}
                                             <select id="kategori" name="kategori" class="form-control form-control-sm">
-                                                <option value="event">event</option>
-                                                <option value="live at privy">live at privy</option>
-                                                <option value="case study">case study</option>
-                                                <option value="stories">stories</option>
-                                                <option value="news">news</option>
-                                                <option value="tips & trick">tips & trick</option>
-                                              </select>
+                                                    <option value="" disabled selected hidden>Pilih</option>
+                                                @foreach ($blog_kategoris as $bk)
+                                                    <option value="{{$bk->kategori}}">{{$bk->kategori}}</option>    
+                                                @endforeach
+                                            </select>
                                     </div>
                                     <div class="form-group m-0">
                                         <label for="tanggal_terbit" class="col-form-label s-12 col-md-4">Tanggal Terbit</label>
@@ -92,8 +90,8 @@
                                     </div>
                                     <div class="form-group m-0">
                                         <label for="isi" class="col-form-label s-12 col-md-4">Isi</label>
-                                        <div class="r-0 s-12 col-md-8">
-                                            <textarea name="isi" id="isi" class="col-md-12">
+                                        <div class="s-12 col-md-8">
+                                            <textarea name="isi" id="isi">
                                             </textarea>
                                         </div>
                                         

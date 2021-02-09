@@ -186,10 +186,16 @@
             <span>Blog</span>
         </a>
     </li>
-    <li>
+    {{-- <li>
         <a href="{{ route('master-privy.grow.index') }}">
             <i class="icon icon-list-alt blue-text s-18"></i>
             <span>Grow</span>
+        </a>
+    </li> --}}
+    <li>
+        <a href="{{ route('master-privy.users.index') }}">
+            <i class="icon icon-list-alt blue-text s-18"></i>
+            <span>User Privy</span>
         </a>
     </li>
     @endcan

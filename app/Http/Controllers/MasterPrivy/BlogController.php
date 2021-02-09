@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 
 // Model
 use App\Models\Blog;
+use App\Models\BlogKategori;
 
 class BlogController extends Controller
 {
@@ -23,11 +24,13 @@ class BlogController extends Controller
         $route = $this->route;
         $title = $this->title;
         $path = $this->path;
-        // dd($route);
+        // data kategori
+        $blog_kategoris = BlogKategori::all();
         return view($this->view . 'index', compact(
             'route',
             'title',
-            'path'
+            'path',
+            'blog_kategoris'
         ));
     }
 

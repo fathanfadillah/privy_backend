@@ -180,6 +180,9 @@ Route::group(['middleware' => ['auth']], function () {
      //grow
      Route::resource('grow', 'GrowController');
      Route::post('grow/api', 'GrowController@api')->name('grow.api');
+    //  users
+     Route::resource('users', 'UsersController');
+     Route::post('users/api', 'UsersController@api')->name('users.api');
     });
 
 
