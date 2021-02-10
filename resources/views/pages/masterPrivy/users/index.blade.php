@@ -60,8 +60,12 @@
                                     </div>
                                     <div class="form-group m-0">
                                         <label for="status_login" class="col-form-label s-12 col-md-4">Status Login</label>
-                                        <input type="text" name="status_login" id="status_login" placeholder=""
-                                            class="form-control r-0 light s-12 col-md-8" autocomplete="off" required />
+                                        <!-- <input type="text" name="status_login" id="status_login" placeholder=""
+                                            class="form-control r-0 light s-12 col-md-8" autocomplete="off" required /> -->
+                                            <label for="" class="col-form-label"><i class='h5 text-danger icon-remove'></i></label>
+                                            <input class="w-25 text-success" type="range" id="status_login" name="status_login" min="0" max="1">
+                                            <label for="" class="col-form-label"><i class='h5 text-success icon-check'></i></label>
+                                            
                                     </div>
                                     <div class="mt-2" style="margin-left: 34%">
                                         <button type="submit" class="btn btn-primary btn-sm" id="action"><i
@@ -105,8 +109,8 @@ var table = $('#dataTable').dataTable({
             name: 'name'
         },
         {
-            data: 'status_login',
-            name: 'status_login'
+            data: 'kolom_status',
+            name: 'kolom_status'
         },
         {
             data: 'action',

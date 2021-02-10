@@ -37,8 +37,15 @@ class UsersController extends Controller
                 <a href='#' onclick='edit(" . $u->id . ")' title='Edit Role'><i class='icon-pencil mr-1'></i></a>
                 <a href='#' onclick='remove(" . $u->id . ")' class='text-danger' title='Hapus Role'><i class='icon-remove'></i></a>";
             })
+            ->addColumn('kolom_status', function($k) {
+                if($k->status_login=='1'){
+                    return "<i class='text-success icon-check'></i>";
+                }else{
+                    return "<i class='text-danger icon-remove'></i>";
+                }
+            })
             ->addIndexColumn()
-            ->rawColumns(['action'])
+            ->rawColumns(['action','kolom_status'])
             ->toJson();
             
     }
